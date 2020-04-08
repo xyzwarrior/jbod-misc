@@ -46,6 +46,8 @@ if (NOT YOCTO)
     endif ()
 endif ()
 
+project (callback-manager CXX)
+
 add_definitions (-DBOOST_ERROR_CODE_HEADER_ONLY)
 add_definitions (-DBOOST_SYSTEM_NO_DEPRECATED)
 add_definitions (-DBOOST_ALL_NO_LIB)
@@ -54,8 +56,8 @@ add_definitions (-DBOOST_NO_TYPEID)
 add_definitions (-DBOOST_ASIO_DISABLE_THREADS)
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories (${Boost_INCLUDE_DIRS})
-include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
+#include_directories (${Boost_INCLUDE_DIRS})
+#include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_executable (callback-manager src/callback_manager.cpp)
 
