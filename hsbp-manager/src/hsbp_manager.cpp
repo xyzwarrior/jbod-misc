@@ -347,6 +347,39 @@ struct Backplane
             assetTag);
     }
 
+    void run2(const std::string& rootPath, const std::string& busname)
+    {
+        std::string dbusName = boost::replace_all_copy(name, " ", "_");
+        hsbpItemIface = objServer.add_interface(
+            "/xyz/openbmc_project/inventory/item/hsbp/" + dbusName,
+            inventory::interface);
+        hsbpItemIface->register_property("Present", true);
+        hsbpItemIface->register_property("PrettyName", name);
+        hsbpItemIface->initialize();
+
+        storageInterface = objServer.add_interface(
+            hsbpItemIface->get_object_path(),
+            "xyz.openbmc_project.Inventory.Item.StorageController");
+        storageInterface->initialize();
+
+        //populateAsset(rootPath, busname);
+        assetInterface = objServer.add_interface(
+                    hsbpIface->get_object_path(), "xyz.openbmc_project.Inventory.Decorator.Asset");
+
+        assetInterface->register_property("Manufacturer", "Quantum");
+        assetInterface->register_property("Model", "2U 12");
+        assetInterface->register_property("PartNumber", "DSS212J-S3");
+        assetInterface->register_property("SerialNumber", "S1234ABCD");
+        assetInterface->initialize();
+
+        ifdet = 0; // not nvme
+        presence = 0xff; // all driver presences
+
+        createDrives();
+
+        runTimer();
+    }
+
     void run(const std::string& rootPath, const std::string& busname)
     {
         file = open(("/dev/i2c-" + std::to_string(bus)).c_str(),
@@ -582,6 +615,10 @@ struct Backplane
 
     bool getPresence(uint8_t& val)
     {
+
+        val = 0xff;
+        return true;
+        /*
         // NVMe drives do not assert PRSNTn, and as such do not get reported as
         // PRESENT in this register
 
@@ -596,10 +633,14 @@ struct Backplane
         // presence is inverted
         val = static_cast<uint8_t>(~ret);
         return true;
+        */
     }
 
     bool getIFDET(uint8_t& val)
     {
+        val = 0;
+        return true;
+        /*
         // This register is a bitmap of parallel GPIO pins connected to the
         // IFDETn pin of a drive slot. SATA, SAS, and NVMe drives all assert
         // IFDETn low when they are inserted into the HSBP.This register, in
@@ -617,10 +658,14 @@ struct Backplane
         // ifdet is inverted
         val = static_cast<uint8_t>(~ret);
         return true;
+        */
     }
 
     bool getFailed(uint8_t& val)
     {
+        val = 0;
+        return true;
+        /*
         constexpr uint8_t addr = 0xC;
         int ret = i2c_smbus_read_byte_data(file, addr);
         if (ret < 0)
@@ -630,10 +675,14 @@ struct Backplane
         }
         val = static_cast<uint8_t>(ret);
         return true;
+        */
     }
 
     bool getRebuild(uint8_t& val)
     {
+        val = 0;
+        return true;
+        /*
         constexpr uint8_t addr = 0xD;
         int ret = i2c_smbus_read_byte_data(file, addr);
         if (ret < 0)
@@ -643,6 +692,7 @@ struct Backplane
         }
         val = static_cast<uint8_t>(ret);
         return true;
+        */
     }
 
     virtual ~Backplane()
@@ -1044,6 +1094,25 @@ void populate()
         0, std::array<const char*, 1>{configType});
 }
 
+void manualPopulate()
+{
+    backplanes.clear();
+    std::optional<size_t> bus = 0;
+    std::optional<size_t> address = 0;
+    std::optional<size_t> backplaneIndex = 0;
+    std::string owner = "jbod backplane"
+    std::string name = "jbod_backplane";
+    std::string path = "/xyz/openbmc_project/inventory/system/board/jbod_backplane";
+    std::string parentPath =
+                            std::filesystem::path(path).parent_path();
+    const auto& [backplane, status] = backplanes.emplace(
+                            name,
+                            Backplane(*bus, *address, *backplaneIndex, name));
+    backplane->second.run2(parentPath, owner);
+    populateMuxes(backplane->second.muxes, parentPath);
+
+}
+
 int main()
 {
     boost::asio::steady_timer callbackTimer(io);
@@ -1100,7 +1169,10 @@ int main()
         objServer.add_interface("/xyz/openbmc_project/inventory/item/storage",
                                 "xyz.openbmc_project.inventory.item.storage");
 
-    io.post([]() { populate(); });
+    io.post([]() {
+       //populate();
+        manualPopulate();
+    });
     setupPowerMatch(conn);
     io.run();
 }
