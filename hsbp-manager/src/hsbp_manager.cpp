@@ -147,9 +147,10 @@ struct Led : std::enable_shared_from_this<Led>
 
     bool set(BlinkPattern pattern)
     {
-        int ret = i2c_smbus_write_byte_data(file, address,
-                                            static_cast<uint8_t>(pattern));
-        return ret >= 0;
+        return true;
+        //int ret = i2c_smbus_write_byte_data(file, address,
+        //                                    static_cast<uint8_t>(pattern));
+        //return ret >= 0;
     }
 
     uint8_t address;
@@ -1097,9 +1098,9 @@ void populate()
 void manualPopulate()
 {
     backplanes.clear();
-    std::optional<size_t> bus = 0;
-    std::optional<size_t> address = 0;
-    std::optional<size_t> backplaneIndex = 0;
+    size_t bus = 0;
+    size_t address = 0;
+    size_t backplaneIndex = 1; // 1 based
 
     std::string name = "jbod backplane";
     std::string path = "/xyz/openbmc_project/inventory/system/board/jbod_backplane";
