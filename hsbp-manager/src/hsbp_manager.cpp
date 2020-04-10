@@ -149,6 +149,7 @@ struct Led : std::enable_shared_from_this<Led>
     {
         // no unused parameter
         uint8_t data = static_cast<uint8_t>(pattern);
+        i2c_smbus_write_byte_data(file, address, data);
         return true;
         //int ret = i2c_smbus_write_byte_data(file, address,
         //                                    static_cast<uint8_t>(pattern));
