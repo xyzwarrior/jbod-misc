@@ -366,10 +366,10 @@ struct Backplane
         assetInterface = objServer.add_interface(
                     hsbpIface->get_object_path(), "xyz.openbmc_project.Inventory.Decorator.Asset");
 
-        assetInterface->register_property("Manufacturer", "Quantum");
-        assetInterface->register_property("Model", "2U 12");
-        assetInterface->register_property("PartNumber", "DSS212J-S3");
-        assetInterface->register_property("SerialNumber", "S1234ABCD");
+        assetInterface->register_property("Manufacturer", std::string("Quantum"));
+        assetInterface->register_property("Model", std::string("2U 12"));
+        assetInterface->register_property("PartNumber", std::string("DSS212J-S3"));
+        assetInterface->register_property("SerialNumber", std::string("S1234ABCD"));
         assetInterface->initialize();
 
         ifdet = 0; // not nvme
