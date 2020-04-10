@@ -347,7 +347,7 @@ struct Backplane
             assetTag);
     }
 
-    void initRun(const std::string& busname)
+    void initRun()
     {
         std::string dbusName = boost::replace_all_copy(name, " ", "_");
         hsbpItemIface = objServer.add_interface(
@@ -362,7 +362,7 @@ struct Backplane
             "xyz.openbmc_project.Inventory.Item.StorageController");
         storageInterface->initialize();
 
-        //populateAsset(rootPath, busname);
+        //populate asset
         assetInterface = objServer.add_interface(
                     hsbpItemIface->get_object_path(), "xyz.openbmc_project.Inventory.Decorator.Asset");
 
@@ -1100,15 +1100,15 @@ void manualPopulate()
     std::optional<size_t> bus = 0;
     std::optional<size_t> address = 0;
     std::optional<size_t> backplaneIndex = 0;
-    std::string owner = "jbod backplane";
-    std::string name = "jbod_backplane";
+
+    std::string name = "jbod backplane";
     std::string path = "/xyz/openbmc_project/inventory/system/board/jbod_backplane";
     std::string parentPath =
                             std::filesystem::path(path).parent_path();
     const auto& [backplane, status] = backplanes.emplace(
                             name,
                             Backplane(*bus, *address, *backplaneIndex, name));
-    backplane->second.initRun(owner);
+    backplane->second.initRun();
     populateMuxes(backplane->second.muxes, parentPath);
 
 }
