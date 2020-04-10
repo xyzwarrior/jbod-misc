@@ -364,7 +364,7 @@ struct Backplane
 
         //populateAsset(rootPath, busname);
         assetInterface = objServer.add_interface(
-                    hsbpIface->get_object_path(), "xyz.openbmc_project.Inventory.Decorator.Asset");
+                    hsbpItemIface->get_object_path(), "xyz.openbmc_project.Inventory.Decorator.Asset");
 
         assetInterface->register_property("Manufacturer", std::string("Quantum"));
         assetInterface->register_property("Model", std::string("2U 12"));
@@ -1100,7 +1100,7 @@ void manualPopulate()
     std::optional<size_t> bus = 0;
     std::optional<size_t> address = 0;
     std::optional<size_t> backplaneIndex = 0;
-    std::string owner = "jbod backplane"
+    std::string owner = "jbod backplane";
     std::string name = "jbod_backplane";
     std::string path = "/xyz/openbmc_project/inventory/system/board/jbod_backplane";
     std::string parentPath =
