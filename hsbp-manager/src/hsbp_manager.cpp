@@ -347,7 +347,7 @@ struct Backplane
             assetTag);
     }
 
-    void run2(const std::string& rootPath, const std::string& busname)
+    void initRun(const std::string& busname)
     {
         std::string dbusName = boost::replace_all_copy(name, " ", "_");
         hsbpItemIface = objServer.add_interface(
@@ -1108,7 +1108,7 @@ void manualPopulate()
     const auto& [backplane, status] = backplanes.emplace(
                             name,
                             Backplane(*bus, *address, *backplaneIndex, name));
-    backplane->second.run2(parentPath, owner);
+    backplane->second.initRun(owner);
     populateMuxes(backplane->second.muxes, parentPath);
 
 }
