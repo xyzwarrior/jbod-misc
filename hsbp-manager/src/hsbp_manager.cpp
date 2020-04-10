@@ -147,6 +147,8 @@ struct Led : std::enable_shared_from_this<Led>
 
     bool set(BlinkPattern pattern)
     {
+        // no unused parameter
+        uint8_t data = static_cast<uint8_t>(pattern);
         return true;
         //int ret = i2c_smbus_write_byte_data(file, address,
         //                                    static_cast<uint8_t>(pattern));
@@ -1108,7 +1110,7 @@ void manualPopulate()
                             std::filesystem::path(path).parent_path();
     const auto& [backplane, status] = backplanes.emplace(
                             name,
-                            Backplane(*bus, *address, *backplaneIndex, name));
+                            Backplane(bus, address, backplaneIndex, name));
     backplane->second.initRun();
     populateMuxes(backplane->second.muxes, parentPath);
 
