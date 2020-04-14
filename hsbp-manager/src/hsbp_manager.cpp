@@ -355,7 +355,7 @@ struct Backplane
     {
         std::string dbusName = boost::replace_all_copy(name, " ", "_");
         hsbpItemIface = objServer.add_interface(
-            "/xyz/openbmc_project/inventory/item/hsbp/" + dbusName,
+            "/xyz/openbmc_project/inventory/system/" + dbusName,
             inventory::interface);
         hsbpItemIface->register_property("Present", true);
         hsbpItemIface->register_property("PrettyName", name);
@@ -1105,8 +1105,8 @@ void manualPopulate()
     size_t address = 0;
     size_t backplaneIndex = 1; // 1 based
 
-    std::string name = "jbod backplane";
-    std::string path = "/xyz/openbmc_project/inventory/system/board/jbod_backplane";
+    std::string name = "exp0";
+    std::string path = "/xyz/openbmc_project/inventory/system/board/exp0";
     std::string parentPath =
                             std::filesystem::path(path).parent_path();
     const auto& [backplane, status] = backplanes.emplace(
